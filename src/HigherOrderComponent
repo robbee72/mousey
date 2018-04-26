@@ -1,0 +1,46 @@
+import React, { Component } from 'react';
+
+//Doesnt use ES6 classes
+const withMouse = (Component) => {
+    return class extends React.Component {
+        state = { x: 0, y: 0 };
+
+        handleMouseMove = (event) => {
+            this.setState({
+                x: event.clientX,
+                y: event.clientY
+            })
+        }
+
+        render() {
+            return (
+                <div onMouseMove={this.handleMouseMove}>
+                    <Component mouse={this.state} />
+                </div>
+            );
+        }
+    }
+}
+
+//data is NOT explicitly defined, it's unclear where x, y are coming from.
+//also this pattern is vulnerable to naming collisions!
+class App extends React.Component {
+    render() {
+        const styles = {
+            position: "fixed",
+            top: "0%",
+            height: "50%",
+            width: "100%",
+            backgroundColor: "#48b83f"
+        }
+        const { x, y } = this.props.mouse;
+        return (
+            <div style={styles}>
+                <h1 className="App-title">Mouse Position: ({x}, {y})</h1>
+            </div>
+        );
+    }
+}
+
+//composed statically - BAD!
+export const HigherOrderComponent = withMouse(App);
